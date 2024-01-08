@@ -1,4 +1,3 @@
-// Не получилось придумать как можно избежать any, сохранив при этом максимальную универсальность
 export const useDebounce = (callback, delay) => {
     let timerRef;
     return (...args) => {

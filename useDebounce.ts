@@ -1,11 +1,10 @@
-// Не получилось придумать как можно избежать any, сохранив при этом максимальную универсальность
-export const useDebounce = (
-    callback: (...args: any) => void,
+export const useDebounce = <T extends Array<unknown>>(
+    callback: (...args: T) => void,
     delay: number
-) => {
+): ((...args: T) => void) => {
     let timerRef: NodeJS.Timeout | undefined;
 
-    return (...args: any) => {
+    return (...args: T) => {
         clearTimeout(timerRef);
 
         timerRef = setTimeout(() => {
