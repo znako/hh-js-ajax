@@ -57,7 +57,6 @@ function onClickSuggest(beer) {
             }
             catch (error) {
                 // localStorage переполнен, очищаем beer и вставляем то, что хотели (может быть переполнен при добавлении нового beer, ну и чисто теоретически при добавлении в lastSearch, а если масштабировать приложение то тем более)
-                console.log("УДАЛЯЕМ");
                 localStorage.removeItem("beers");
                 localStorage.setItem("beers", JSON.stringify({ [beer.name]: beer }));
                 localStorage.removeItem("lastSearch");
@@ -110,7 +109,6 @@ let isLocalStorage;
         }
         // Ловим событие storage при изменении localStorage, чтобы обновить последние запросы
         window.addEventListener("storage", ({ key, oldValue, newValue }) => {
-            console.log(1);
             if (key === "lastSearch" && newValue) {
                 setBeerListStringInLastSearch(newValue);
             }
@@ -134,7 +132,6 @@ const onInputHandler = async (event) => {
                         .toLowerCase()
                         .startsWith(inputValue.toLowerCase()))
                         .slice(0, MAX_LOCAL_STORAGE_SUGGESTS);
-                    console.log(localStorageSuggests);
                     suggestOldDiv.innerHTML = "";
                     localStorageSuggests.forEach((beer) => {
                         insertLinkIntoDiv(beer, suggestOldDiv, "append", true);
@@ -144,7 +141,6 @@ const onInputHandler = async (event) => {
             // Берем саджесты из ручки
             suggestNewDiv.innerHTML = "Loading...";
             const response = (await fetchData(inputValue));
-            console.log(response);
             // Отфильтруем саджесты из ручки, оставив только те, которых нет в саджестах из localStorage, чтобы не повторялись, и покажем пользователю
             suggestNewDiv.innerHTML = "";
             response
@@ -165,5 +161,6 @@ const onInputHandler = async (event) => {
         suggestNewDiv.innerHTML = "";
     }
 };
+// Используем debounce чтобы снизить нагрузку на сервер
 const debouncedOnInputHandler = useDebounce(onInputHandler, 250);
 inputElement.oninput = debouncedOnInputHandler;

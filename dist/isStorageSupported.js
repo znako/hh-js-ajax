@@ -10,6 +10,7 @@ function isQuotaExceededError(err) {
             // Firefox
             err.name === "NS_ERROR_DOM_QUOTA_REACHED"));
 }
+// Проверка на доступность localStorage в браузере
 export function isStorageSupported() {
     let storage;
     try {
@@ -23,8 +24,6 @@ export function isStorageSupported() {
         return true;
     }
     catch (err) {
-        // We acknowledge a QuotaExceededError only if there's something
-        // already stored.
         const isValidQuotaExceededError = isQuotaExceededError(err) && !!storage && storage.length > 0;
         return isValidQuotaExceededError;
     }
