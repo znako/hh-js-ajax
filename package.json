@@ -1,23 +1,24 @@
 {
-  "name": "hh-js-ajax",
-  "version": "1.0.0",
-  "description": "HH: hw js/ajax",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/znako/hh-js-ajax.git"
-  },
-  "author": "znako",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/znako/hh-js-ajax/issues"
-  },
-  "homepage": "https://github.com/znako/hh-js-ajax#readme",
-  "devDependencies": {
-    "@types/node": "^20.10.4",
-    "typescript": "^4.9.4"
-  }
+    "name": "hh-js-ajax",
+    "version": "1.0.0",
+    "description": "HH: hw js/ajax",
+    "main": "index.js",
+    "type": "module",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/znako/hh-js-ajax.git"
+    },
+    "author": "znako",
+    "license": "ISC",
+    "bugs": {
+        "url": "https://github.com/znako/hh-js-ajax/issues"
+    },
+    "homepage": "https://github.com/znako/hh-js-ajax#readme",
+    "devDependencies": {
+        "@types/node": "^20.10.4",
+        "typescript": "^4.9.4"
+    }
 }

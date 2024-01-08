@@ -6,6 +6,12 @@ p {
     margin: 10px 0;
 }
 
+.heading {
+    text-align: center;
+    font-weight: bold;
+    margin-top: 0;
+}
+
 .section-content {
     max-width: 1000px;
     display: flex;
@@ -38,9 +44,13 @@ p {
 }
 
 .suggest {
-    height: 300px;
-    border: 1px solid green;
+    /* height: 300px; */
+    /* border: 1px solid green; */
     padding-left: 10px;
+}
+
+.suggest__item_visited {
+    color: blueviolet;
 }
 
 .result {
@@ -48,12 +58,6 @@ p {
     border: 1px solid red;
     visibility: hidden;
     padding: 10px;
-}
-
-.result__title {
-    text-align: center;
-    font-weight: bold;
-    margin-top: 0;
 }
 
 .result__info-title {
@@ -67,8 +71,9 @@ p {
     margin: 0 20px 20px 0;
 }
 
-.last-search {
+.last-search-wrapper {
     width: 350px;
     height: 400px;
+    padding: 10px;
     border: 1px solid black;
 }

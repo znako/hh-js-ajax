@@ -4,13 +4,13 @@
         <meta charset="UTF-8" />
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <script src="./index.js" defer></script>
+        <script src="./index.js" type="module" defer></script>
         <link rel="stylesheet" href="./index.css" />
         <title>BeerLover</title>
     </head>
     <body>
         <section class="section-content">
-            <div class="wrapper">
+            <div class="wrapper" id="wrapper">
                 <div class="search-wrapper">
                     <div class="search-wrapper_error" id="error"></div>
                     <div class="input-wrapper">
@@ -18,14 +18,15 @@
                         <input
                             type="text"
                             name="beer"
-                            id="beer"
+                            id="beerInput"
                             class="input-wrapper__input"
                         />
                     </div>
-                    <div class="suggest" id="suggest"></div>
+                    <div class="suggest" id="suggestOld"></div>
+                    <div class="suggest" id="suggestNew"></div>
                 </div>
                 <div class="result" id="result">
-                    <p class="result__title">Результат</p>
+                    <h3 class="heading">Результат</h3>
                     <img src="" alt="" class="result__image" id="beerImage" />
                     <p>
                         <span class="result__info-title">Название </span>
@@ -56,7 +57,10 @@
                     </p>
                 </div>
             </div>
-            <div class="last-search"></div>
+            <div class="last-search-wrapper">
+                <h3 class="heading">Последнее, что вы искали</h3>
+                <div id="lastSearch"></div>
+            </div>
         </section>
     </body>
 </html>
