@@ -6,6 +6,16 @@ p {
     margin: 10px 0;
 }
 
+a {
+    color: black;
+    text-decoration: none;
+}
+
+.visited {
+    color: blueviolet;
+    text-decoration: none;
+}
+
 .heading {
     text-align: center;
     font-weight: bold;
@@ -24,18 +34,19 @@ p {
     width: 600px;
 }
 
+.search-wrapper {
+    height: 350px;
+    box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
 .search-wrapper_error {
     padding-left: 10px;
     color: red;
 }
 
-.search-wrapper {
-    height: 400px;
-}
-
 .input-wrapper {
     padding: 15px;
-    border: 1px solid black;
+    box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.12);
 }
 
 .input-wrapper__input {
@@ -44,18 +55,12 @@ p {
 }
 
 .suggest {
-    /* height: 300px; */
-    /* border: 1px solid green; */
     padding-left: 10px;
 }
 
-.suggest__item_visited {
-    color: blueviolet;
-}
-
 .result {
-    height: 300px;
-    border: 1px solid red;
+    margin-top: 20px;
+    box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.12);
     visibility: hidden;
     padding: 10px;
 }
@@ -75,5 +80,5 @@ p {
     width: 350px;
     height: 400px;
     padding: 10px;
-    border: 1px solid black;
+    box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.12);
 }
