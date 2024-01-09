@@ -28,6 +28,26 @@ const beerDescription = document.getElementById(
     "beerDescription"
 ) as HTMLSpanElement;
 
+const getLocalStorageItemSafe = <T>(localStorageKey: string): T | null => {
+    const stringifyData = localStorage.getItem(localStorageKey);
+    if (!stringifyData) return null;
+    try {
+        const data = JSON.parse(stringifyData);
+        return data;
+    } catch (error) {
+        return null;
+    }
+};
+
+const setLocalStorageItemSafe = <T>(localStorageKey: string, data: T) => {
+    try {
+        localStorage.setItem(localStorageKey, JSON.stringify(data));
+    } catch (error) {
+        // localStorage переполнен, очищаем его
+        localStorage.clear();
+    }
+};
+
 function onClickSuggest(beer: BeerData) {
     return () => {
         // Отрисовываем данные
@@ -42,51 +62,29 @@ function onClickSuggest(beer: BeerData) {
         resultDiv.style.visibility = "visible";
 
         if (isLocalStorage) {
-            try {
-                // Сохраняем beer в localStorage
-                const beers = localStorage.getItem("beers");
-                if (beers) {
-                    const beersData = JSON.parse(beers) as Record<
-                        string,
-                        BeerData
-                    >;
-                    beersData[beer.name] = beer;
-                    localStorage.setItem("beers", JSON.stringify(beersData));
-                } else {
-                    localStorage.setItem(
-                        "beers",
-                        JSON.stringify({ [beer.name]: beer })
-                    );
-                }
+            // Сохраняем beer в localStorage
+            const beers =
+                getLocalStorageItemSafe<Record<string, BeerData>>("beers");
+            if (beers) {
+                beers[beer.name] = beer;
+                setLocalStorageItemSafe("beers", beers);
+            } else {
+                setLocalStorageItemSafe("beers", { [beer.name]: beer });
+            }
 
-                // Сохраняем beer в localStorage как историю поиска (сохраняем только если последнее, что мы искали не совпадает с текущим)
-                const lastSearch = localStorage.getItem("lastSearch");
-                if (lastSearch) {
-                    const lastSearchData = JSON.parse(
-                        lastSearch
-                    ) as Array<BeerData>;
-                    if (beer.name !== lastSearchData[0].name) {
-                        lastSearchData.unshift(beer);
-                        if (lastSearchData.length > MAX_LAST_SEARCH_ELEMENTS) {
-                            lastSearchData.pop();
-                        }
-                        localStorage.setItem(
-                            "lastSearch",
-                            JSON.stringify(lastSearchData)
-                        );
+            // Сохраняем beer в localStorage как историю поиска (сохраняем только если последнее, что мы искали не совпадает с текущим)
+            const lastSearch =
+                getLocalStorageItemSafe<Array<BeerData>>("lastSearch");
+            if (lastSearch) {
+                if (beer.name !== lastSearch[0].name) {
+                    lastSearch.unshift(beer);
+                    if (lastSearch.length > MAX_LAST_SEARCH_ELEMENTS) {
+                        lastSearch.pop();
                     }
-                } else {
-                    localStorage.setItem("lastSearch", JSON.stringify([beer]));
+                    setLocalStorageItemSafe("lastSearch", lastSearch);
                 }
-            } catch (error) {
-                // localStorage переполнен, очищаем beer и вставляем то, что хотели (может быть переполнен при добавлении нового beer, ну и чисто теоретически при добавлении в lastSearch, а если масштабировать приложение то тем более)
-                localStorage.removeItem("beers");
-                localStorage.setItem(
-                    "beers",
-                    JSON.stringify({ [beer.name]: beer })
-                );
-                localStorage.removeItem("lastSearch");
-                localStorage.setItem("lastSearch", JSON.stringify([beer]));
+            } else {
+                setLocalStorageItemSafe("lastSearch", [beer]);
             }
         }
 
@@ -132,25 +130,23 @@ let isLocalStorage: boolean;
     // Проверяем доступен ли localStorage
     isLocalStorage = isStorageSupported();
     if (isLocalStorage) {
-        const setBeerListStringInLastSearch = (beerListString: string) => {
-            const lastSearchList = JSON.parse(
-                beerListString
-            ) as Array<BeerData>;
-            lastSearchList
-                .reverse()
-                .forEach((beer) => setBeerInLastSearchDiv(beer));
+        const initLastSearch = () => {
+            const lastSearch =
+                getLocalStorageItemSafe<Array<BeerData>>("lastSearch");
+            if (lastSearch) {
+                lastSearch
+                    .reverse()
+                    .forEach((beer) => setBeerInLastSearchDiv(beer));
+            }
         };
 
         // Инитим последние запросы
-        const lastSearch = localStorage.getItem("lastSearch");
-        if (lastSearch) {
-            setBeerListStringInLastSearch(lastSearch);
-        }
+        initLastSearch();
 
         // Ловим событие storage при изменении localStorage, чтобы обновить последние запросы
-        window.addEventListener("storage", ({ key, oldValue, newValue }) => {
-            if (key === "lastSearch" && newValue) {
-                setBeerListStringInLastSearch(newValue);
+        window.addEventListener("storage", ({ key }) => {
+            if (key === "lastSearch") {
+                initLastSearch();
             }
         });
     }
@@ -163,51 +159,52 @@ const onInputHandler = async (event: Event) => {
 
     if (event.target.value) {
         const inputValue = event.target.value;
-        try {
-            let localStorageSuggests: Array<BeerData> = [];
+        let localStorageSuggests: Array<BeerData> = [];
 
-            // Берем саджесты из localStorage, показываем пользователю
-            if (isLocalStorage) {
-                const beers = localStorage.getItem("beers");
-                if (beers) {
-                    localStorageSuggests = Object.values(
-                        JSON.parse(beers) as Record<string, BeerData>
+        // Берем саджесты из localStorage, показываем пользователю
+        if (isLocalStorage) {
+            const beers =
+                getLocalStorageItemSafe<Record<string, BeerData>>("beers");
+            if (beers) {
+                localStorageSuggests = Object.values(beers)
+                    .filter((beer) =>
+                        beer.name
+                            .toLowerCase()
+                            .startsWith(inputValue.toLowerCase())
                     )
-                        .filter((beer) =>
-                            beer.name
-                                .toLowerCase()
-                                .startsWith(inputValue.toLowerCase())
-                        )
-                        .slice(0, MAX_LOCAL_STORAGE_SUGGESTS);
+                    .slice(0, MAX_LOCAL_STORAGE_SUGGESTS);
 
-                    suggestOldDiv.innerHTML = "";
-                    localStorageSuggests.forEach((beer) => {
-                        insertLinkIntoDiv(beer, suggestOldDiv, "append", true);
-                    });
-                }
-            }
-
-            // Берем саджесты из ручки
-            suggestNewDiv.innerHTML = "Loading...";
-            const response = (await fetchData(inputValue)) as Array<BeerData>;
-            // Отфильтруем саджесты из ручки, оставив только те, которых нет в саджестах из localStorage, чтобы не повторялись, и покажем пользователю
-            suggestNewDiv.innerHTML = "";
-            response
-                .filter(
-                    (beer) =>
-                        !localStorageSuggests.find(
-                            (localBeer) => localBeer.name === beer.name
-                        )
-                )
-                .slice(0, MAX_SUGGESTS - localStorageSuggests.length)
-                .forEach((beer) => {
-                    insertLinkIntoDiv(beer, suggestNewDiv, "append");
+                suggestOldDiv.innerHTML = "";
+                localStorageSuggests.forEach((beer) => {
+                    insertLinkIntoDiv(beer, suggestOldDiv, "append", true);
                 });
+            }
+        }
+
+        // Берем саджесты из ручки
+        suggestNewDiv.innerHTML = "Loading...";
+        let response: Array<BeerData>;
+        try {
+            response = (await fetchData(inputValue)) as Array<BeerData>;
         } catch (error) {
             const { message } = error as ErrorType;
             console.error("ERROR", message);
             errorOutput.textContent = message;
+            return;
         }
+        // Отфильтруем саджесты из ручки, оставив только те, которых нет в саджестах из localStorage, чтобы не повторялись, и покажем пользователю
+        suggestNewDiv.innerHTML = "";
+        response
+            .filter(
+                (beer) =>
+                    !localStorageSuggests.find(
+                        (localBeer) => localBeer.name === beer.name
+                    )
+            )
+            .slice(0, MAX_SUGGESTS - localStorageSuggests.length)
+            .forEach((beer) => {
+                insertLinkIntoDiv(beer, suggestNewDiv, "append");
+            });
     } else {
         suggestOldDiv.innerHTML = "";
         suggestNewDiv.innerHTML = "";
