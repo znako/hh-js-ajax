@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <script src="./dist/index.js" type="module" defer></script>
+        <link rel="stylesheet" href="./index.css" />
+        <title>BeerLover</title>
+    </head>
+    <body>
+        <section class="section-content">
+            <div class="wrapper" id="wrapper">
+                <div class="search-wrapper">
+                    <div class="search-wrapper_error" id="error"></div>
+                    <div class="input-wrapper">
+                        <label for="beer">Введите название пива</label>
+                        <input
+                            type="text"
+                            name="beer"
+                            id="beerInput"
+                            class="input-wrapper__input"
+                        />
+                    </div>
+                    <div class="suggest" id="suggestOld"></div>
+                    <div class="suggest" id="suggestNew"></div>
+                </div>
+                <div class="result" id="result">
+                    <h3 class="heading">Результат</h3>
+                    <img src="" alt="" class="result__image" id="beerImage" />
+                    <p>
+                        <span class="result__info-title">Название </span>
+                        <span id="beerName"></span>
+                    </p>
+                    <p>
+                        <span class="result__info-title">Теги </span>
+                        <span id="beerTags"></span>
+                    </p>
+                    <p>
+                        <span class="result__info-title"
+                            >Старт производства
+                        </span>
+                        <span id="beerFirstBrewed"></span>
+                    </p>
+                    <p>
+                        <span class="result__info-title">Крепость </span>
+                        <span id="beerAbv"></span>
+                    </p>
+                    <p>
+                        <span class="result__info-title"
+                            >Идеально сочетается с </span
+                        ><span id="beerFoodPairing"></span>
+                    </p>
+                    <p>
+                        <span class="result__info-title">Описание </span>
+                        <span id="beerDescription"></span>
+                    </p>
+                </div>
+            </div>
+            <div class="last-search-wrapper">
+                <h3 class="heading">Последнее, что вы искали</h3>
+                <div id="lastSearch"></div>
+            </div>
+        </section>
+    </body>
+</html>
