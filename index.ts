@@ -28,7 +28,7 @@ const beerDescription = document.getElementById(
     "beerDescription"
 ) as HTMLSpanElement;
 
-const getLocalStorageItemSafe = <T>(localStorageKey: string): T | null => {
+const getLocalStorageItemSafe = (localStorageKey: string) => {
     const stringifyData = localStorage.getItem(localStorageKey);
     if (!stringifyData) return null;
     try {
@@ -39,7 +39,7 @@ const getLocalStorageItemSafe = <T>(localStorageKey: string): T | null => {
     }
 };
 
-const setLocalStorageItemSafe = <T>(localStorageKey: string, data: T) => {
+const setLocalStorageItemSafe = (localStorageKey: string, data: unknown) => {
     try {
         localStorage.setItem(localStorageKey, JSON.stringify(data));
     } catch (error) {
@@ -63,8 +63,10 @@ function onClickSuggest(beer: BeerData) {
 
         if (isLocalStorage) {
             // Сохраняем beer в localStorage
-            const beers =
-                getLocalStorageItemSafe<Record<string, BeerData>>("beers");
+            const beers = getLocalStorageItemSafe("beers") as Record<
+                string,
+                BeerData
+            >;
             if (beers) {
                 beers[beer.name] = beer;
                 setLocalStorageItemSafe("beers", beers);
@@ -73,8 +75,9 @@ function onClickSuggest(beer: BeerData) {
             }
 
             // Сохраняем beer в localStorage как историю поиска (сохраняем только если последнее, что мы искали не совпадает с текущим)
-            const lastSearch =
-                getLocalStorageItemSafe<Array<BeerData>>("lastSearch");
+            const lastSearch = getLocalStorageItemSafe(
+                "lastSearch"
+            ) as Array<BeerData>;
             if (lastSearch) {
                 if (beer.name !== lastSearch[0].name) {
                     lastSearch.unshift(beer);
@@ -131,8 +134,9 @@ let isLocalStorage: boolean;
     isLocalStorage = isStorageSupported();
     if (isLocalStorage) {
         const initLastSearch = () => {
-            const lastSearch =
-                getLocalStorageItemSafe<Array<BeerData>>("lastSearch");
+            const lastSearch = getLocalStorageItemSafe(
+                "lastSearch"
+            ) as Array<BeerData>;
             if (lastSearch) {
                 lastSearch
                     .reverse()
@@ -163,8 +167,10 @@ const onInputHandler = async (event: Event) => {
 
         // Берем саджесты из localStorage, показываем пользователю
         if (isLocalStorage) {
-            const beers =
-                getLocalStorageItemSafe<Record<string, BeerData>>("beers");
+            const beers = getLocalStorageItemSafe("beers") as Record<
+                string,
+                BeerData
+            >;
             if (beers) {
                 localStorageSuggests = Object.values(beers)
                     .filter((beer) =>
